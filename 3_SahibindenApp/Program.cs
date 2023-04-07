@@ -16,7 +16,7 @@ namespace _3_SahibindenApp
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FrmCarAdd());
+            Application.Run(new FrmList());
         }
     }
 }

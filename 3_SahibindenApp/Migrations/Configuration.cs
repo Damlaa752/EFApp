@@ -10,6 +10,7 @@
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
+            AutomaticMigrationDataLossAllowed = true; //model değişikliğinde veri kaybı olup olmadığıyla ilgili
         }
 
         protected override void Seed(_3_SahibindenApp.Context.CarsDbContext context)

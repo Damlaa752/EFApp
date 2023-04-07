@@ -9,8 +9,12 @@ namespace _3_SahibindenApp.Models
 {
     internal class Color : IDName
     {
-        public Color(int brandID, string name) : base(brandID, name)
+        public Color(string name) : base( name)
         {
+        }
+        public Color()
+        {
+            
         }
     }
 }

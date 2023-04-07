@@ -4,12 +4,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace _3_SahibindenApp.Models
 {
     internal class Brand : IDName
     {
-        public Brand(int brandID, string name) : base(brandID, name)
+        public Brand() : base()
+        {
+            
+        }
+        public Brand( string name) : base( name)
         {
            
         }
