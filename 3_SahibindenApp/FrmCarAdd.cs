@@ -1,86 +1,154 @@
 ﻿using _3_SahibindenApp.Context;
 using _3_SahibindenApp.Models;
+using _3_SahibindenApp;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Entity;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace _3_SahibindenApp
+
+namespace _3_Sahibinden
 {
-    public partial class FrmCarAdd : Form
-    {
-        public FrmCarAdd()
-        {
-            InitializeComponent();
-            BrandFill();
-        }
-        CarsDbContext db = new CarsDbContext();
-        FrmBrandAndColor fbc;
-        public void BrandFill()
-        {
-           cbBrand.Items.Clear();
-            foreach (var brand in db.Brands)
-            {
-                cbBrand.Items.Add(brand.Name);
-            }
+	public partial class FrmCar : Form
+	{
+		public FrmCar()
+		{
+			InitializeComponent();
+			cbBrandFill();
+			cbColorFill();
+		}
+		CarsDbContext db = new CarsDbContext();
+		public void cbColorFill()
+		{
+			cbColor.DisplayMember = "Name";
+			cbColor.ValueMember = "Id";
+			cbColor.DataSource = db.Colors.OrderBy(i => i.Name).ToList();
+		}
 
-        }
-        public void Colorfill()
-        {
-            cbColor.Items.Clear();
-            foreach(var color in db.Colors)
-            {
-                cbColor.Items.Add(color.Name);
-            }
-        }
-        private void btnBrandAdd_Click(object sender, EventArgs e)
-        {
-            fbc = new FrmBrandAndColor();
-            fbc.isBrand = true;           
-            fbc.Show();
-        }
+		public void cbBrandFill()
+		{
+			cbBrand.DisplayMember = "Name";
+			cbBrand.ValueMember = "Id";
+			cbBrand.DataSource = db.Brands.OrderBy(i => i.Name).ToList();
+		}
 
-        private void btnColorAdd_Click(object sender, EventArgs e)
-        {
-            fbc = new FrmBrandAndColor();
-            fbc.isBrand = false;
-            fbc.Show();
-        }
+		public bool isAdd;
+		FrmList fl;
+		private void btnSave_Click(object sender, EventArgs e)
+		{
+			if (Application.OpenForms["FrmList"] == null)
+				fl = new FrmList();
+			else
+				fl = (FrmList)Application.OpenForms["FrmList"];
 
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            bool sonuc = true;
-            if (txtYear.Text.Length < 5)
-            {
-            for (int i = 0; i < txtYear.Text.Length; i++)
-            {
-                if (!char.IsDigit(txtYear.Text[i]))
-                        sonuc =false;
-                }
-               MessageBox.Show("Yılı doğru giriniz.");
-                
-            }
-            Car car = new Car(cbBrand.Text,txtModel.Text, int.Parse(txtYear.Text), txtKm.Text,double.Parse(txtPrice.Text), int.Parse(cbColor.Text), txtCity.Text);
-            db.Cars.Add(car);   
-            db.SaveChanges();
-            FrmList f = new FrmList();
-            f.Show();
-            f.DbVeriCekme();
-        }
 
-        private void değiştirToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+			if (isAdd)
+			{
+				//Ekleme
+				Car car = new Car(txtModel.Text, Convert.ToInt32(txtYear.Text), Convert.ToInt32(txtKm.Text), Convert.ToDouble(txtPrice.Text), txtCity.Text);
+				car.BrandID = (int)cbBrand.SelectedValue;
+				car.ColorID = (int)cbColor.SelectedValue;
 
-        }
+				db.Entry(car).State = EntityState.Added;
+			}
+			else
+			{
+				//Güncelleme
+				Car car = db.Cars.Find(fl.id);
+				car.Model = txtModel.Text;
+				car.Year = Convert.ToInt32(txtYear.Text);
+				car.Km = Convert.ToInt32(txtKm.Text);
+				car.Price = Convert.ToDouble(txtPrice.Text);
+				car.City = txtCity.Text;
 
-        private void silToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+				car.BrandID = (int)cbBrand.SelectedValue;
+				car.ColorID = (int)cbColor.SelectedValue;
 
-        }
-    }
+				db.Entry(car).State = EntityState.Modified;
+
+			}
+			db.SaveChanges();
+			fl.GridFill();
+		}
+
+		FrmBrandAndColor fbc;
+		private void btnBrand_Click(object sender, EventArgs e)
+		{
+			if (Application.OpenForms["FrmBrandAndColor"] == null)
+				fbc = new FrmBrandAndColor();
+			else
+				fbc = (FrmBrandAndColor)Application.OpenForms["FrmBrandAndColor"];
+			fbc.Show();
+			fbc.tabControl1.SelectedIndex = 0;
+			isBrandAdd = true;
+		}
+
+		private void btnColor_Click(object sender, EventArgs e)
+		{
+			if (Application.OpenForms["FrmBrandAndColor"] == null)
+				fbc = new FrmBrandAndColor();
+			else
+				fbc = (FrmBrandAndColor)Application.OpenForms["FrmBrandAndColor"];
+
+			fbc.Show();
+			fbc.tabControl1.SelectedIndex = 1;
+			isColorAdd = true;
+		}
+		//Brand
+		public bool isBrandAdd, isColorAdd;
+		public string brand_name, color_name;
+		private void değiştirToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (Application.OpenForms["FrmBrandAndColor"] == null)
+				fbc = new FrmBrandAndColor();
+			else
+				fbc = (FrmBrandAndColor)Application.OpenForms["FrmBrandAndColor"];
+
+			isBrandAdd = false;
+			fbc.Show();
+			fbc.tabControl1.SelectedIndex = 0;
+			fbc.txtBrand.Text = cbBrand.Text;
+			brand_name = cbBrand.Text;
+		}
+
+		private void silToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Brand brand = db.Brands.Find(cbBrand.SelectedValue);
+			db.Entry(brand).State = EntityState.Deleted;
+			db.SaveChanges();
+			cbBrandFill();
+
+		}
+
+		//Color toolstrip
+		//Değiştir
+		private void toolStripMenuItem1_Click(object sender, EventArgs e)
+		{
+			if (Application.OpenForms["FrmBrandAndColor"] == null)
+				fbc = new FrmBrandAndColor();
+			else
+				fbc = (FrmBrandAndColor)Application.OpenForms["FrmBrandAndColor"];
+
+			isColorAdd = false;
+			fbc.Show();
+			fbc.tabControl1.SelectedIndex = 1;
+			fbc.txtColor.Text = cbColor.Text;
+			color_name = cbColor.Text;
+		}
+
+		//Sil
+		private void toolStripMenuItem2_Click(object sender, EventArgs e)
+		{
+           var color = db.Colors.Find(cbColor.SelectedValue);
+			db.Entry(color).State = EntityState.Deleted;
+			db.SaveChanges();
+			cbColorFill();
+		}
+	}
 }

@@ -75,10 +75,6 @@
     <Compile Include="FrmList.Designer.cs">
       <DependentUpon>FrmList.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202304060918171_Sahibinden.cs" />
-    <Compile Include="Migrations\202304060918171_Sahibinden.designer.cs">
-      <DependentUpon>202304060918171_Sahibinden.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Brand.cs" />
     <Compile Include="Models\Color.cs" />
@@ -94,9 +90,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmList.resx">
       <DependentUpon>FrmList.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202304060918171_Sahibinden.resx">
-      <DependentUpon>202304060918171_Sahibinden.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

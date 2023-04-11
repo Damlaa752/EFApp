@@ -14,13 +14,11 @@ namespace _3_SahibindenApp.Models
         [Key]
         public int ID { get; set; }
         public int BrandID { get; set; }
-        public Brand Brand { get; set; }
         public string Model { get; set; }
         public int Year { get; set; }
         public int Km { get; set; }
         public double Price { get; set; }
         public int ColorID { get; set; }
-        public Color Color { get; set; }
         public string City { get; set; }
 
         public Car()
